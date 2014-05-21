@@ -1,7 +1,7 @@
-Foothold
+SuperSimpleSim
 ======
 
-A template for creating JavaScript apps with a grunt-driven build process.
+A super simple simulator.
 
 
 Building this project
