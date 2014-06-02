@@ -1,7 +1,7 @@
 SuperSimpleSim
 ======
 
-A super simple simulator.
+This framework provides the bare bones for running a natural simulation in a web browser and is based on [FloraJS](http://github.com/vinceallenvince/FloraJS) and [Burner](http://github.com/vinceallenvince/Burner).
 
 
 Building this project

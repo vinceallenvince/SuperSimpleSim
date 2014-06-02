@@ -4,15 +4,17 @@
  * Creates a new Item.
  * @constructor
  */
-function Item() {
+function Item(opt_options) {
+
+  var options = opt_options || {};
 
   this.world = document.body;
-  this.name = 'Item';
+  this.name = options.name || 'Item';
   this.id = this.name + Item._idCount;
 
   this.el = document.createElement('div');
   this.el.id = this.id;
-  this.el.className = this.name.toLowerCase();
+  this.el.className = 'item ' + this.name.toLowerCase();
   this.world.appendChild(this.el);
 
   Item._idCount++;
@@ -62,6 +64,10 @@ Item.prototype.init = function(opt_options) {
   this._force = new exports.Vector();
   this.checkWorldEdges = typeof options.checkWorldEdges === 'undefined' ?
       true : options.checkWorldEdges;
+
+  this.color[0] = parseInt(this.color[0], 10);
+  this.color[1] = parseInt(this.color[1], 10);
+  this.color[2] = parseInt(this.color[2], 10);
 };
 
 /**
@@ -151,7 +157,7 @@ Item.prototype._wrapWorldEdges = function() {
   if (location.y + height / 2 > worldBottom) {
     location.y = height / 2;
   } else if (location.y < height / 2) {
-    location.y = scrollHeight - height / 2;
+    location.y = worldBottom - height / 2;
   }
 };
 

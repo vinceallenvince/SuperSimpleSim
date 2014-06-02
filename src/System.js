@@ -57,8 +57,8 @@ System.add = function(klass, options) {
   var records = this._records;
   if (SuperSimpleSim[klass]) {
     records.push(new SuperSimpleSim[klass]());
-  } else if (SuperSimpleSim.Classes[klass]) {
-    records.push(new SuperSimpleSim.Classes[klass](options));
+  } else if (SuperSimpleSim.System.Classes[klass]) {
+    records.push(new SuperSimpleSim.System.Classes[klass](options));
   } else {
     records.push(new exports.Item());
   }
@@ -118,6 +118,21 @@ System.getCSSText = function(props) {
 };
 
 /**
+ * Extends the properties and methods of a superClass onto a subClass.
+ *
+ * @function extend
+ * @memberof System
+ * @param {Object} subClass The subClass.
+ * @param {Object} superClass The superClass.
+ */
+System.extend = function(subClass, superClass) {
+  function F() {}
+  F.prototype = superClass.prototype;
+  subClass.prototype = new F;
+  subClass.prototype.constructor = subClass;
+};
+
+/**
  * Generates a psuedo-random number within a range.
  *
  * @function getRandomNumber
@@ -132,5 +147,22 @@ System.getRandomNumber = function(low, high, flt) {
     return Math.random()*(high-(low-1)) + low;
   }
   return Math.floor(Math.random()*(high-(low-1))) + low;
+};
+
+/**
+ * Re-maps a number from one range to another.
+ *
+ * @function map
+ * @memberof System
+ * @param {number} value The value to be converted.
+ * @param {number} min1 Lower bound of the value's current range.
+ * @param {number} max1 Upper bound of the value's current range.
+ * @param {number} min2 Lower bound of the value's target range.
+ * @param {number} max2 Upper bound of the value's target range.
+ * @returns {number} A number.
+ */
+System.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
+  var unitratio = (value - min1) / (max1 - min1);
+  return (unitratio * (max2 - min2)) + min2;
 };
 
