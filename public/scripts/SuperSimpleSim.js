@@ -1,42 +1,45 @@
-/*! SuperSimpleSim v1.0.1 - 2014-05-24 12:05:10 
- *  Vince Allen 
- *  Brooklyn, NY 
- *  vince@vinceallen.com 
- *  @vinceallenvince 
- *  License: MIT */
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*global document */
 
-var SuperSimpleSim = {}, exports = SuperSimpleSim;
-
-(function(exports) {
-
-"use strict";
+var Vector = require('./Vector').Vector;
 
 /**
  * Creates a new Item.
  * @constructor
  */
-function Item(opt_options) {
+function Item(system) {
 
-  var options = opt_options || {};
+  if (!system) {
+    throw new Error('Item requires a System.');
+  }
 
+  this.system = system;
   this.world = document.body;
-  this.name = options.name || 'Item';
-  this.id = this.name + Item._idCount;
-
-  this.el = document.createElement('div');
-  this.el.id = this.id;
-  this.el.className = 'item ' + this.name.toLowerCase();
-  this.world.appendChild(this.el);
-
   Item._idCount++;
 }
 
+/**
+ * Holds a count of item instances.
+ * @private
+ */
 Item._idCount = 0;
+
+/**
+ * Holds a transform property based on supportedFeatures.
+ * @private
+ */
+Item._stylePosition =
+    'transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
+    '-webkit-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
+    '-moz-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
+    '-o-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
+    '-ms-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>);';
 
 /**
  * Resets all properties.
  *
  * @param {Object} [opt_options=] A map of initial properties.
+ * @param {number} [opt_options.name = 10] The item's name.
  * @param {number} [opt_options.width = 10] Width.
  * @param {number} [opt_options.height = 10] Height.
  * @param {number} [opt_options.scale = 1] Scale.
@@ -65,28 +68,35 @@ Item.prototype.init = function(opt_options) {
   this.angle = options.angle || 0;
   this.color = options.color || [0, 0, 0];
   this.mass = typeof options.mass === 'undefined' ? 10 : options.mass;
-  this.acceleration = options.acceleration || new exports.Vector();
-  this.velocity = options.velocity || new exports.Vector();
-  this.location = options.location || new exports.Vector(this.world.scrollWidth / 2,
+  this.acceleration = options.acceleration || new Vector();
+  this.velocity = options.velocity || new Vector();
+  this.location = options.location || new Vector(this.world.scrollWidth / 2,
       this.world.scrollHeight / 2);
   this.maxSpeed = typeof options.maxSpeed === 'undefined' ? 10 : options.maxSpeed;
   this.minSpeed = options.minSpeed || 0;
   this.bounciness = options.bounciness || 0.5;
-  this._force = new exports.Vector();
+  this._force = new Vector();
   this.checkWorldEdges = typeof options.checkWorldEdges === 'undefined' ?
       true : options.checkWorldEdges;
 
   this.color[0] = parseInt(this.color[0], 10);
   this.color[1] = parseInt(this.color[1], 10);
   this.color[2] = parseInt(this.color[2], 10);
+
+  this.name = options.name || 'Item';
+  this.id = this.name + Item._idCount;
+  this.el = document.createElement('div');
+  this.el.id = this.id;
+  this.el.className = 'item ' + this.name.toLowerCase();
+  this.world.appendChild(this.el);
 };
 
 /**
  * Applies forces to item.
  */
 Item.prototype.step = function() {
-  this.applyForce(exports.System.gravity);
-  this.applyForce(exports.System.wind);
+  this.applyForce(this.system.gravity);
+  this.applyForce(this.system.wind);
   this.velocity.add(this.acceleration);
   this.velocity.limit(this.maxSpeed, this.minSpeed);
   this.location.add(this.velocity);
@@ -122,7 +132,7 @@ Item.prototype.applyForce = function(force) {
  */
 Item.prototype._checkWorldEdges = function() {
 
-  var x, y, worldRight = this.world.scrollWidth,
+  var worldRight = this.world.scrollWidth,
       worldBottom = this.world.scrollHeight,
       location = this.location,
       velocity = this.velocity,
@@ -153,7 +163,7 @@ Item.prototype._checkWorldEdges = function() {
  */
 Item.prototype._wrapWorldEdges = function() {
 
-  var x, y, worldRight = this.world.scrollWidth,
+  var worldRight = this.world.scrollWidth,
       worldBottom = this.world.scrollHeight,
       location = this.location,
       width = this.width,
@@ -176,13 +186,44 @@ Item.prototype._wrapWorldEdges = function() {
  * Updates the corresponding DOM element's style property.
  */
 Item.prototype.draw = function() {
-  exports.System._draw(this);
+  var cssText = this.getCSSText({
+    x: this.location.x - (this.width / 2),
+    y: this.location.y - (this.height / 2),
+    angle: this.angle,
+    scale: this.scale || 1,
+    width: this.width,
+    height: this.height,
+    color0: this.color[0],
+    color1: this.color[1],
+    color2: this.color[2]
+  });
+  this.el.style.cssText = cssText;
 };
 
+/**
+ * Concatenates a new cssText string.
+ *
+ * @function getCSSText
+ * @memberof Item
+ * @param {Object} props A map of object properties.
+ * @returns {string} A string representing cssText.
+ */
+Item.prototype.getCSSText = function(props) {
+  return Item._stylePosition.replace(/<x>/g, props.x).replace(/<y>/g, props.y).replace(/<angle>/g, props.angle).replace(/<scale>/g, props.scale) + 'width: ' + props.width + 'px; height: ' + props.height + 'px; background-color: rgb(' + props.color0 + ', ' + props.color1 + ', ' + props.color2 + ')';
+};
 
-exports.Item = Item;
+module.exports.Item = Item;
 
+},{"./Vector":4}],2:[function(require,module,exports){
+/*global window, document, setTimeout, Burner, Modernizr */
 /*jshint supernew:true */
+
+var Item = require('./Item').Item,
+    Vector = require('./Vector').Vector;
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
 /** @namespace */
 var System = {
   name: 'System'
@@ -196,23 +237,12 @@ System.Classes = {};
 /**
  * Holds a vector describing the system gravity.
  */
-System.gravity = {};
+System.gravity = new Vector(0, 1);
 
 /**
  * Holds a vector describing the system wind.
  */
-System.wind = {};
-
-/**
- * Holds a transform property based on supportedFeatures.
- * @private
- */
-System._stylePosition =
-		'transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
-    '-webkit-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
-    '-moz-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
-    '-o-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>); ' +
-    '-ms-transform: translate3d(<x>px, <y>px, 0) rotate(<angle>deg) scale(<scale>, <scale>);';
+System.wind = new Vector();
 
 /**
  * Stores references to all items in the system.
@@ -226,8 +256,6 @@ System._records = [];
  * @memberof System
  */
 System.setup = function(func) {
-  this.gravity = new exports.Vector(0, 1);
-  this.wind = new exports.Vector(0, 0);
   func.call(this);
 };
 
@@ -236,14 +264,15 @@ System.setup = function(func) {
  * @function add
  * @memberof System
  */
-System.add = function(klass, options) {
-  var records = this._records;
-  if (SuperSimpleSim[klass]) {
-    records.push(new SuperSimpleSim[klass]());
-  } else if (SuperSimpleSim.System.Classes[klass]) {
-    records.push(new SuperSimpleSim.System.Classes[klass](options));
+System.add = function(klass, opt_options) {
+
+  var records = this._records,
+      options = opt_options || {};
+
+  if (System.Classes[klass]) {
+    records.push(new System.Classes[klass](this));
   } else {
-    records.push(new exports.Item());
+    records.push(new Item(this));
   }
   records[records.length - 1].init(options);
 };
@@ -254,61 +283,36 @@ System.add = function(klass, options) {
  * @memberof System
  */
 System.loop = function() {
-	var i, records = System._records;
-	var len = System._records.length;
+  var i, records = System._records,
+      len = System._records.length;
   for (i = len - 1; i >= 0; i -= 1) {
     records[i].step();
   }
   for (i = len - 1; i >= 0; i -= 1) {
     records[i].draw();
   }
-  window.requestAnimFrame(System.loop);
+  if (typeof window.requestAnimationFrame !== 'undefined') {
+    window.requestAnimationFrame(System.loop);
+  }
 };
 
-/**
- * Updates the corresponding DOM element's style property.
- *
- * @function map
- * @memberof System
- * @param {Object} obj An item.
- */
-System._draw = function(obj) {
+module.exports.System = System;
 
-  var cssText = this.getCSSText({
-    x: obj.location.x - (obj.width / 2),
-    y: obj.location.y - (obj.height / 2),
-    angle: obj.angle,
-    scale: obj.scale || 1,
-    width: obj.width,
-    height: obj.height,
-    color0: obj.color[0],
-    color1: obj.color[1],
-    color2: obj.color[2]
-  });
-  obj.el.style.cssText = cssText;
-};
-
-/**
- * Concatenates a new cssText string.
- *
- * @function getCSSText
- * @memberof System
- * @param {Object} props A map of object properties.
- * @returns {string} A string representing cssText.
- */
-System.getCSSText = function(props) {
-  return this._stylePosition.replace(/<x>/g, props.x).replace(/<y>/g, props.y).replace(/<angle>/g, props.angle).replace(/<scale>/g, props.scale) + 'width: ' + props.width + 'px; height: ' + props.height + 'px; background-color: rgb(' + props.color0 + ', ' + props.color1 + ', ' + props.color2 + ')';
+},{"./Item":1,"./Vector":4}],3:[function(require,module,exports){
+/** @namespace */
+var Utils = {
+  name: 'Utils'
 };
 
 /**
  * Extends the properties and methods of a superClass onto a subClass.
  *
  * @function extend
- * @memberof System
+ * @memberof Utils
  * @param {Object} subClass The subClass.
  * @param {Object} superClass The superClass.
  */
-System.extend = function(subClass, superClass) {
+Utils.extend = function(subClass, superClass) {
   function F() {}
   F.prototype = superClass.prototype;
   subClass.prototype = new F;
@@ -319,13 +323,13 @@ System.extend = function(subClass, superClass) {
  * Generates a psuedo-random number within a range.
  *
  * @function getRandomNumber
- * @memberof System
+ * @memberof Utils
  * @param {number} low The low end of the range.
  * @param {number} high The high end of the range.
  * @param {boolean} [flt] Set to true to return a float.
  * @returns {number} A number.
  */
-System.getRandomNumber = function(low, high, flt) {
+Utils.getRandomNumber = function(low, high, flt) {
   if (flt) {
     return Math.random()*(high-(low-1)) + low;
   }
@@ -336,7 +340,7 @@ System.getRandomNumber = function(low, high, flt) {
  * Re-maps a number from one range to another.
  *
  * @function map
- * @memberof System
+ * @memberof Utils
  * @param {number} value The value to be converted.
  * @param {number} min1 Lower bound of the value's current range.
  * @param {number} max1 Upper bound of the value's current range.
@@ -344,14 +348,15 @@ System.getRandomNumber = function(low, high, flt) {
  * @param {number} max2 Upper bound of the value's target range.
  * @returns {number} A number.
  */
-System.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
+Utils.map = function(value, min1, max1, min2, max2) { // returns a new value relative to a new range
   var unitratio = (value - min1) / (max1 - min1);
   return (unitratio * (max2 - min2)) + min2;
 };
 
+module.exports.Utils = Utils;
 
-exports.System = System;
-
+},{}],4:[function(require,module,exports){
+/*jshint supernew:true */
 /**
  * Creates a new Vector.
  *
@@ -595,30 +600,18 @@ Vector.prototype.midpoint = function(vector) {
  * @returns {Object} A vector.
  */
 Vector.prototype.dot = function(vector) {
-  if (this.z && vector.z) {
-    return this.x * vector.x + this.y * vector.y + this.z * vector.z;
-  }
   return this.x * vector.x + this.y * vector.y;
 };
 
-exports.Vector = Vector;
+module.exports.Vector = Vector;
 
-/*jshint unused:false */
-/**
- * RequestAnimationFrame shim layer with setTimeout fallback
- * @param {function} callback The function to call.
- * @returns {function|Object} An animation frame or a timeout object.
- */
-window.requestAnimFrame = (function(callback){
+},{}],5:[function(require,module,exports){
+var SuperSimpleSim = {
+  Item: require('./Item').Item,
+  System: require('./System').System,
+  Vector: require('./Vector').Vector,
+  Utils: require('./Utils').Utils
+};
 
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          window.oRequestAnimationFrame      ||
-          window.msRequestAnimationFrame     ||
-          function(callback) {
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
-
-}(exports));
+window.SuperSimpleSim = SuperSimpleSim;
+},{"./Item":1,"./System":2,"./Utils":3,"./Vector":4}]},{},[1,2,3,4,5])
