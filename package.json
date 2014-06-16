@@ -4,7 +4,7 @@
   "description": "A super simple simulator.",
   "main": "src/main.js",
   "scripts": {
-    "install": "npm install -g phantomjs",
+    "preinstall": "export DISPLAY=:99.0 && sh -e /etc/init.d/xvfb start",
     "test": "browserify test/*.js | testling"
   },
   "repository": "",
