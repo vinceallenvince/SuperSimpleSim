@@ -135,6 +135,7 @@ module.exports = function(grunt) {
   grunt.registerTask('doc', ['jsdoc']);
 
   // "install": "npm install -g phantomjs",
+  // node node_modules/testling/node_modules/browser-launcher/example/detect.js
 
 };
 
