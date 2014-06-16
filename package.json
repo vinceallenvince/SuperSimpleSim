@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "install": "npm install -g phantomjs",
-    "test": "browserify test/*.js | testling -x /usr/local/phantomjs/bin/phantomjs"
+    "test": "browserify test/*.js | testling"
   },
   "repository": "",
   "author": {
