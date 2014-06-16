@@ -4,7 +4,7 @@
   "description": "A super simple simulator.",
   "main": "src/main.js",
   "scripts": {
-    "install": "npm install -g phantomjs; rm ~/.config/browser-launcher/config.json",
+    "install": "rm ~/.config/browser-launcher/config.json",
     "test": "browserify test/*.js | testling"
   },
   "repository": "",
