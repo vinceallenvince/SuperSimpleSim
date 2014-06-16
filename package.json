@@ -4,7 +4,6 @@
   "description": "A super simple simulator.",
   "main": "src/main.js",
   "scripts": {
-    "install": "npm install -g phantomjs",
     "test": "browserify test/*.js | testling"
   },
   "repository": "",
@@ -33,5 +32,10 @@
     "tap": "^0.4.11",
     "tape": "^2.13.3",
     "testling": "^1.6.1"
+  },
+  "testling": {
+    "browsers": [
+      "phantomjs/latest"
+    ]
   }
 }

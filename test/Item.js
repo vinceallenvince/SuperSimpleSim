@@ -97,7 +97,7 @@ test('should initialize with custom properties.', function(t) {
   t.end();
 });
 
-test('step should calculate a new location.', function(t) {
+test('step() should calculate a new location.', function(t) {
   obj = new Item(System);
   obj.init({
     location: new Vector(100, 100),
@@ -123,7 +123,7 @@ test('step should calculate a new location.', function(t) {
   t.end();
 });
 
-test('applyForce should return a new acceleration.', function(t) {
+test('applyForce() should return a new acceleration.', function(t) {
   obj = new Item(System);
   obj.init();
   var force = new Vector(0, 100);
@@ -132,7 +132,7 @@ test('applyForce should return a new acceleration.', function(t) {
   t.end();
 });
 
-test('checkWorldEdges should calculate a new location.', function(t) {
+test('checkWorldEdges() should calculate a new location.', function(t) {
   obj = new Item(System);
   obj.init({
     location: new Vector(document.body.scrollWidth + 10, 0)
@@ -155,7 +155,7 @@ test('checkWorldEdges should calculate a new location.', function(t) {
   t.end();
 });
 
-test('wrapWorldEdges should calculate a new location.', function(t) {
+test('wrapWorldEdges() should calculate a new location.', function(t) {
   obj = new Item(System);
   obj.init({
     location: new Vector()

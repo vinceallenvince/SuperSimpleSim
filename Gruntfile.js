@@ -91,7 +91,8 @@ module.exports = function(grunt) {
       }
     },
     exec: {
-      test: 'npm test'
+      test: 'npm test',
+      testcoverage: 'browserify -t coverify test/*.js | testling | coverify'
     },
     watch: {
       files: ['src/*.js'],
@@ -129,11 +130,11 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['cssmin', 'browserify', 'copy:publicJS', 'copy:publicCSS']);
   grunt.registerTask('release', ['csslint', 'jshint', 'exec:test', 'cssmin', 'browserify', 'uglify', 'copy:publicJS', 'copy:publicCSS']);
   grunt.registerTask('test', ['exec:test']);
+  grunt.registerTask('testcoverage', ['exec:testcoverage']);
   grunt.registerTask('report', ['plato']);
   grunt.registerTask('doc', ['jsdoc']);
-  grunt.registerTask('cop', ['copy:publicJS', 'copy:publicCSS']);
 
-  // browserify -t coverify test/*.js | testling | coverify
+  // "install": "npm install -g phantomjs",
 
 };
 

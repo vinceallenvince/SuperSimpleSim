@@ -37,12 +37,17 @@ test('add() should add create a new item and add it to _records.', function(t) {
   t.end();
 });
 
-test('add() should add create a new item and add it to _records.', function(t) {
+test('loop() should call step() and draw().', function(t) {
   System._records = [];
-  System.add();
-  System._records[System._records.length - 1].init();
+  System.gravity.y = 1;
+  System.add('Item', {
+    location: new Vector(100, 100)
+  });
+  System._records[System._records.length - 1].init({
+    location: new Vector(100, 100)
+  });
   System.loop();
-  t.equal(System._records.length, 1, 'should add an instance of a custom class to _records');
-  System.loop();
+  t.equal(System._records[System._records.length - 1].location.y, 100.1, 'step() should update location.');
+  t.equal(System._records[System._records.length - 1].acceleration.y, 0, 'step() should reset acceleration.');
   t.end();
 });
