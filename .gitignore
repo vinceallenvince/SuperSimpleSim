@@ -3,6 +3,7 @@ node_modules
 reports
 doc
 out
+release
 
 #### FILES ####
 *.DS_Store

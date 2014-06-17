@@ -128,7 +128,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['cssmin', 'browserify', 'copy:publicJS', 'copy:publicCSS']);
-  grunt.registerTask('release', ['csslint', 'jshint', 'exec:test', 'cssmin', 'browserify', 'uglify', 'copy:publicJS', 'copy:publicCSS']);
+  grunt.registerTask('release', ['csslint', 'jshint', 'cssmin', 'browserify', 'uglify', 'copy:publicJS', 'copy:publicCSS', 'jsdoc', 'plato']);
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('testcoverage', ['exec:testcoverage']);
   grunt.registerTask('report', ['plato']);

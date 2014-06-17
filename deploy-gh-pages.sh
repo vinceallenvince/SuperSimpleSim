@@ -7,6 +7,10 @@ echo "starting deploy..."
  git config user.name "vinceallenvince"
  git config user.email "vince@vinceallen.com"
  cp -r ../public/* ./
+ cp -r ../doc/ ./
+ cp -r ../plato ./
+ cp releases/SuperSimpleSim.min.js ./scripts/SuperSimpleSim.min.js
+ cp releases/SuperSimpleSim.min.css ./css/SuperSimpleSim.min.css
  git add .
  git commit -m "Deployed to Github Pages"
  git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:gh-pages > /dev/null 2>&1
