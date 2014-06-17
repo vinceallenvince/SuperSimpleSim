@@ -17,4 +17,5 @@ deploy:
   on:
     repo: vinceallenvince/SuperSimpleSim
     tags: true
+    all_branches: true
 after_deploy: "echo 'done!'"
