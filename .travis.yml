@@ -16,7 +16,6 @@ deploy:
     secure: ZK09+RCsV8kVvCbmiEH5SlsjjweAkdOsDghn93xaDYdg/AAeuQYULgvgPX8ypujeRmTsr+dvEJo7MW2pTQuaPAEJe3a0ENwb+NgpzTBSXHvkL2qFumQgyHEJWO40sD6uGwFbEHuGsxcgtRMWapUfbh9Pa/Fc2OSLZnw7klHemDA=
   file:
   - release/SuperSimpleSim.min.js
-  - release/SuperSimpleSim.js
   - release/SuperSimpleSim.min.css
   skip_cleanup: true
   on:
