@@ -1,6 +1,7 @@
 #!/bin/bash
 rm -rf out || exit 0;
 mkdir out;
+echo "starting deploy..."
 ( cd out
  git init
  git config user.name "vinceallenvince"
