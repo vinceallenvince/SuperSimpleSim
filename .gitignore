@@ -8,3 +8,5 @@ release
 #### FILES ####
 *.DS_Store
 *.swp
+public/scripts/SuperSimpleSim.min.js
+public/css/SuperSimpleSim.min.css
