@@ -1,6 +1,18 @@
 language: node_js
 node_js:
-  - "0.10"
+- '0.10'
 before_install:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+before_deploy: "echo 'ready?'"
+deploy:
+  provider: releases
+  api_key:
+    secure: ZK09+RCsV8kVvCbmiEH5SlsjjweAkdOsDghn93xaDYdg/AAeuQYULgvgPX8ypujeRmTsr+dvEJo7MW2pTQuaPAEJe3a0ENwb+NgpzTBSXHvkL2qFumQgyHEJWO40sD6uGwFbEHuGsxcgtRMWapUfbh9Pa/Fc2OSLZnw7klHemDA=
+  file:
+    - release/SuperSimpleSim.min.js
+    - release/SuperSimpleSim.js
+    - release/SuperSimpleSim.min.css
+  on:
+    repo: vinceallenvince/SuperSimpleSim
+after_deploy: "echo 'done!'"
