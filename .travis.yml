@@ -13,6 +13,8 @@ deploy:
     - release/SuperSimpleSim.min.js
     - release/SuperSimpleSim.js
     - release/SuperSimpleSim.min.css
+  skip_cleanup: true
   on:
     repo: vinceallenvince/SuperSimpleSim
+    tags: true
 after_deploy: "echo 'done!'"
