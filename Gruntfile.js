@@ -133,8 +133,8 @@ module.exports = function(grunt) {
   grunt.registerTask('testcoverage', ['exec:testcoverage']);
   grunt.registerTask('report', ['plato']);
   grunt.registerTask('doc', ['jsdoc']);
+  grunt.registerTask('lint', ['csslint', 'jshint']);
 
-  // "install": "npm install -g phantomjs",
   // node node_modules/testling/node_modules/browser-launcher/example/detect.js
 
 };

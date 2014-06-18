@@ -79,7 +79,7 @@ By default, a System defines gravity as a vector pointing straight down. You can
 </html>
 ```
 
-To use your own classes, check out the [MouseChaser](http://github.com/vinceallenvince/SuperSimpleSim/blob/master/public/scripts/MouseChaser.js) class and [its implementation](http://github.com/vinceallenvince/SuperSimpleSim/blob/master/public/chase.html). Please also [view the examples](http://vinceallenvince.github.io/SuperSimpleSim/).
+Please also [view the examples](http://vinceallenvince.github.io/SuperSimpleSim/), [check out the docs](http://vinceallenvince.github.io/SuperSimpleSim/doc), or see what plato [has to say about it](http://vinceallenvince.github.io/SuperSimpleSim/reports).
 
 
 Building this project
@@ -95,6 +95,16 @@ Next, run grunt.
 
 ```
 grunt
+```
+
+For tests, run grunt test.
+```
+grunt test
+```
+
+For test coverage, run grunt testcoverage.
+```
+grunt testcoverage
 ```
 
 A pre-commit hook is defined in /pre-commit that runs jshint. To use the hook, run the following:
