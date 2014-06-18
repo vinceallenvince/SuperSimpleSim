@@ -1,12 +1,17 @@
+/**
+ * Creates a MouseChaser.
+ * @requires SuperSimpleSim
+ * @param {Object} opt_options Options.
+ */
 function MouseChaser(opt_options) {
   var options = opt_options || {};
   options.name = options.name || 'MouseChaser';
-  exports.Item.call(this, options);
+  SuperSimpleSim.Item.call(this, options);
 }
-exports.System.extend(MouseChaser, exports.Item);
+SuperSimpleSim.Utils.extend(MouseChaser, SuperSimpleSim.Item);
 
 
-MouseChaser.map = exports.System.map;
+MouseChaser.map = SuperSimpleSim.Utils.map;
 
 /**
  * Holds the current and last mouse/touch positions relative
@@ -14,9 +19,9 @@ MouseChaser.map = exports.System.map;
  * @public
  */
 MouseChaser.mouse = {
-  location: new exports.Vector(),
-  lastLocation: new exports.Vector(),
-  velocity: new exports.Vector()
+  location: new SuperSimpleSim.Vector(),
+  lastLocation: new SuperSimpleSim.Vector(),
+  velocity: new SuperSimpleSim.Vector()
 };
 
 /**
@@ -72,11 +77,11 @@ MouseChaser._recordMouseLoc = function(e) {
  * Applies forces to item.
  */
 MouseChaser.prototype.step = function() {
-  this.applyForce(exports.System.gravity);
-  this.applyForce(exports.System.wind);
+  this.applyForce(SuperSimpleSim.System.gravity);
+  this.applyForce(SuperSimpleSim.System.wind);
 
   var t = {
-    location: new exports.Vector(MouseChaser.mouse.location.x,
+    location: new SuperSimpleSim.Vector(MouseChaser.mouse.location.x,
         MouseChaser.mouse.location.y)
   };
   this.applyForce(this._seek(t));
@@ -102,7 +107,7 @@ MouseChaser.prototype.step = function() {
 MouseChaser.prototype._seek = function(target) {
 
   var world = this.world,
-    desiredVelocity = exports.Vector.VectorSub(target.location, this.location),
+    desiredVelocity = SuperSimpleSim.Vector.VectorSub(target.location, this.location),
     distanceToTarget = desiredVelocity.mag();
 
   desiredVelocity.normalize();
