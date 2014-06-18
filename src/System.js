@@ -34,6 +34,12 @@ System.wind = new Vector();
 System._records = [];
 
 /**
+ * Stores references to all items removed from the system.
+ * @private
+ */
+System._pool = [];
+
+/**
  * Call to execute any setup code before starting the animation loop.
  * @function setup
  * @memberof System
@@ -58,6 +64,26 @@ System.add = function(klass, opt_options) {
     records.push(new Item(this));
   }
   records[records.length - 1].init(options);
+  return records[records.length - 1];
+};
+
+/**
+ * Removes an item from the system.
+ * @function remove
+ * @memberof System
+ * @param {Object} obj The item to remove.
+ */
+System.remove = function (obj) {
+
+  var i, max, records = System._records;
+
+  for (i = 0, max = records.length; i < max; i++) {
+    if (records[i].id === obj.id) {
+      records[i].el.style.visibility = 'hidden'; // hide item
+      System._pool[System._pool.length] = records.splice(i, 1)[0]; // move record to pool array
+      break;
+    }
+  }
 };
 
 /**
