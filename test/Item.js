@@ -17,6 +17,7 @@ test('check static properties', function(t) {
 
 test('new Item() should create a new Item and add its view to the DOM.', function(t) {
   obj = new Item(System);
+  t.equal(obj.name, 'Item', 'should have a name.');
   t.equal(typeof obj.system, 'object', 'should have a system.');
   t.equal(typeof obj.world, 'object', 'should have a world.');
   t.equal(Item._idCount, 1, 'should increment Item._idCount.');

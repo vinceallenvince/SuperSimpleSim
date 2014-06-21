@@ -3,10 +3,10 @@
  * @requires SuperSimpleSim
  * @param {Object} opt_options Options.
  */
-function MouseChaser(opt_options) {
+function MouseChaser(system, opt_options) {
   var options = opt_options || {};
-  options.name = options.name || 'MouseChaser';
-  SuperSimpleSim.Item.call(this, options);
+  this.name = options.name || 'MouseChaser';
+  SuperSimpleSim.Item.call(this, system, this.name);
 }
 SuperSimpleSim.Utils.extend(MouseChaser, SuperSimpleSim.Item);
 

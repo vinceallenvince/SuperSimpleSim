@@ -7,12 +7,13 @@ var Vector = require('./Vector').Vector;
  * @constructor
  * @param {Object} system A reference to the simulation's system.
  */
-function Item(system) {
+function Item(system, opt_name) {
 
   if (!system) {
     throw new Error('Item requires a System.');
   }
 
+  this.name = opt_name || 'Item';
   this.system = system;
   this.world = document.body;
   Item._idCount++;
@@ -95,7 +96,6 @@ Item.prototype.init = function(opt_options) {
   this.color[1] = parseInt(this.color[1], 10);
   this.color[2] = parseInt(this.color[2], 10);
 
-  this.name = options.name || 'Item';
   this.id = this.name + Item._idCount;
   if (!this.el) {
     this.el = document.createElement('div');
