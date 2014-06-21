@@ -69,13 +69,14 @@ test('remove() should hide an item and add it to _loop.', function(t) {
 });
 
 test('loop() should call step() and draw().', function(t) {
+  document.body.innerHTML = '';
   System._records = [];
-  System.gravity.y = 1;
+  System._pool = [];
+  System.Classes = {};
   System.add('Item', {
-    location: new Vector(100, 100)
-  });
-  System._records[System._records.length - 1].init({
-    location: new Vector(100, 100)
+    location: new Vector(100, 100),
+    checkWorldEdges: false,
+    wrapWorldEdges: false
   });
   System.loop();
   t.equal(System._records[System._records.length - 1].location.y, 100.1, 'step() should update location.');

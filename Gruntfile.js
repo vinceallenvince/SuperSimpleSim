@@ -65,7 +65,8 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: bannerContentMin,
-        report: 'min'
+        report: 'min',
+        sourceMap: true
       },
       target: {
         src: ['release/' + latest + '.js'],
@@ -76,7 +77,7 @@ module.exports = function(grunt) {
       publicJS: {
         expand: true,
         cwd: 'release/',
-        src: '*.js',
+        src: ['*.js', '*.map'],
         dest: 'public/scripts/',
         flatten: true,
         filter: 'isFile'
