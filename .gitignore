@@ -10,4 +10,5 @@ release
 *.swp
 public/scripts/SuperSimpleSim.js
 public/scripts/SuperSimpleSim.min.js
+public/scripts/SuperSimpleSim.min.js.map
 public/css/SuperSimpleSim.min.css
