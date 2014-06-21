@@ -15,7 +15,7 @@ test('check static properties', function(t) {
   t.end();
 });
 
-test('should create a new Item and add its view to the DOM.', function(t) {
+test('new Item() should create a new Item and add its view to the DOM.', function(t) {
   obj = new Item(System);
   t.equal(typeof obj.system, 'object', 'should have a system.');
   t.equal(typeof obj.world, 'object', 'should have a world.');
@@ -26,7 +26,7 @@ test('should create a new Item and add its view to the DOM.', function(t) {
   t.end();
 });
 
-test('should initialize with default properties.', function(t) {
+test('init() should initialize with default properties.', function(t) {
   obj = new Item(System);
   obj.init();
   t.equal(obj.name, 'Item');
@@ -48,16 +48,20 @@ test('should initialize with default properties.', function(t) {
   t.equal(obj.minSpeed, 0, 'default minSpeed.');
   t.equal(obj.bounciness, 0.5, 'default bounciness.');
   t.equal(obj.checkWorldEdges, true, 'default checkWorldEdges.');
+  t.equal(obj.wrapWorldEdges, false, 'default checkWorldEdges.');
+  t.equal(typeof obj.beforeStep, 'function', 'default beforeStep');
   t.equal(obj._force.x, 0, 'force cache.');
   t.equal(obj._force.y, 0, 'force cache.');
   t.equal(obj.id, 'Item2', 'should have an id.');
   t.equal(typeof obj.el, 'object', 'should have a DOM element as a view.');
+  t.equal(obj.el.style.position, 'absolute', 'should have absolute positioning.');
+  t.equal(obj.el.style.top, '-5000px', 'should be positioned off screen.');
   t.equal(document.querySelectorAll('.item').length, 1, 'should append a DOM element to the document.body');
   t.end();
 });
 
 
-test('should initialize with custom properties.', function(t) {
+test('init() should initialize with custom properties.', function(t) {
   obj = new Item(System);
   obj.init({
     hello: 'hi',
@@ -73,7 +77,9 @@ test('should initialize with custom properties.', function(t) {
     maxSpeed: 50,
     minSpeed: 8,
     bounciness: 0.9,
-    checkWorldEdges: false
+    checkWorldEdges: false,
+    wrapWorldEdges: true,
+    beforeStep: function() {return 100;}
   });
   t.equal(obj.hello, 'hi', 'should accept any property.');
   t.equal(obj.width, 50, 'custom width.');
@@ -94,6 +100,8 @@ test('should initialize with custom properties.', function(t) {
   t.equal(obj.minSpeed, 8, 'custom minSpeed.');
   t.equal(obj.bounciness, 0.9, 'custom bounciness.');
   t.equal(obj.checkWorldEdges, false, 'custom checkWorldEdges.');
+  t.equal(obj.wrapWorldEdges, true, 'custom wrapWorldEdges.');
+  t.equal(obj.beforeStep(), 100, 'custom beforeStep')
   t.end();
 });
 
@@ -115,10 +123,11 @@ test('step() should calculate a new location.', function(t) {
   obj = new Item(System);
   obj.init({
     location: new Vector(0, 0),
-    checkWorldEdges: false
+    checkWorldEdges: false,
+    wrapWorldEdges: true
   });
   obj.step();
-  t.assert(obj.location.y > 0, 'checkWorldEdges: false; new location y should wrap to bottom of the document.body.');
+  t.assert(obj.location.y > 0, 'checkWorldEdges: false, wrapWorldEdges: true; new location y should wrap to bottom of the document.body.');
   System.gravity.y = 1;
   t.end();
 });
