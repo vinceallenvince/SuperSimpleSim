@@ -5,6 +5,7 @@ var Vector = require('./Vector').Vector;
 /**
  * Creates a new Item.
  * @constructor
+ * @param {Object} system A reference to the simulation's system.
  */
 function Item(system) {
 
@@ -19,12 +20,14 @@ function Item(system) {
 
 /**
  * Holds a count of item instances.
+ * @memberof Item
  * @private
  */
 Item._idCount = 0;
 
 /**
  * Holds a transform property based on supportedFeatures.
+ * @memberof Item
  * @private
  */
 Item._stylePosition =
@@ -36,6 +39,8 @@ Item._stylePosition =
 
 /**
  * Resets all properties.
+ * @function init
+ * @memberof Item
  *
  * @param {Object} [opt_options=] A map of initial properties.
  * @param {number} [opt_options.name = 10] The item's name.
@@ -50,6 +55,11 @@ Item._stylePosition =
  * @param {Function|Object} [opt_options.location = new Vector()] location.
  * @param {number} [opt_options.maxSpeed = 10] maxSpeed.
  * @param {number} [opt_options.minSpeed = 0] minSpeed.
+ * @param {bounciness} [opt_options.bounciness = 0] bounciness.
+ * @param {boolean} [opt_options.checkWorldEdges = true] Set to true to check for world boundary collisions.
+ * @param {boolean} [opt_options.wrapWorldEdges = false] Set to true to check for world boundary collisions and position item at the opposing boundary.
+ * @param {Function} [opt_options.beforeStep = 0] This function will be called at the beginning of the item's step() function.
+ * @param {string} [opt_options.name = 'Item'] The item's name. Typically this is the item's class name.
  */
 Item.prototype.init = function(opt_options) {
 
@@ -74,9 +84,12 @@ Item.prototype.init = function(opt_options) {
   this.maxSpeed = typeof options.maxSpeed === 'undefined' ? 10 : options.maxSpeed;
   this.minSpeed = options.minSpeed || 0;
   this.bounciness = options.bounciness || 0.5;
-  this._force = new Vector();
   this.checkWorldEdges = typeof options.checkWorldEdges === 'undefined' ?
       true : options.checkWorldEdges;
+  this.wrapWorldEdges = options.wrapWorldEdges || false;
+  this.beforeStep = options.beforeStep || function() {};
+
+  this._force = new Vector();
 
   this.color[0] = parseInt(this.color[0], 10);
   this.color[1] = parseInt(this.color[1], 10);
@@ -84,16 +97,23 @@ Item.prototype.init = function(opt_options) {
 
   this.name = options.name || 'Item';
   this.id = this.name + Item._idCount;
-  this.el = document.createElement('div');
-  this.el.id = this.id;
-  this.el.className = 'item ' + this.name.toLowerCase();
-  this.world.appendChild(this.el);
+  if (!this.el) {
+    this.el = document.createElement('div');
+    this.el.id = this.id;
+    this.el.className = 'item ' + this.name.toLowerCase();
+    this.el.style.position = 'absolute';
+    this.el.style.top = '-5000px';
+    this.world.appendChild(this.el);
+  }
 };
 
 /**
  * Applies forces to item.
+ * @function step
+ * @memberof Item
  */
 Item.prototype.step = function() {
+  this.beforeStep.call(this);
   this.applyForce(this.system.gravity);
   this.applyForce(this.system.wind);
   this.velocity.add(this.acceleration);
@@ -101,7 +121,7 @@ Item.prototype.step = function() {
   this.location.add(this.velocity);
   if (this.checkWorldEdges) {
     this._checkWorldEdges();
-  } else {
+  } else if (this.wrapWorldEdges) {
     this._wrapWorldEdges();
   }
   this.acceleration.mult(0);
@@ -109,7 +129,8 @@ Item.prototype.step = function() {
 
 /**
  * Adds a force to this object's acceleration.
- *
+ * @function applyForce
+ * @memberof Item
  * @param {Object} force A Vector representing a force to apply.
  * @returns {Object} A Vector representing a new acceleration.
  */
@@ -126,7 +147,8 @@ Item.prototype.applyForce = function(force) {
 
 /**
  * Prevents object from moving beyond world bounds.
- *
+ * @function _checkWorldEdges
+ * @memberof Item
  * @private
  */
 Item.prototype._checkWorldEdges = function() {
@@ -157,7 +179,9 @@ Item.prototype._checkWorldEdges = function() {
 };
 
 /**
- * Prevents object from moving beyond world bounds.
+ * If item moves beyond world bounds, position's object at the opposite boundary.
+ * @function _wrapWorldEdges
+ * @memberof Item
  * @private
  */
 Item.prototype._wrapWorldEdges = function() {
@@ -183,6 +207,8 @@ Item.prototype._wrapWorldEdges = function() {
 
 /**
  * Updates the corresponding DOM element's style property.
+ * @function draw
+ * @memberof Item
  */
 Item.prototype.draw = function() {
   var cssText = this.getCSSText({

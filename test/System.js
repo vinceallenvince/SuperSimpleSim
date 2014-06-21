@@ -29,14 +29,29 @@ test('setup() should execute a callback.', function(t) {
 });
 
 test('add() should add create a new item and add it to _records.', function(t) {
-  System.add();
-  t.equal(System._records.length, 1, 'should add a new item to _records');
+  var itemA = System.add();
+  t.assert(typeof itemA === 'object' && itemA.name === 'Item', 'add() should return the new item.');
+  t.equal(System._records.length, 1, 'should add a new item to _records.');
   function Box() {}
   Box.prototype.init = function() {};
   System.Classes.Box = Box;
   var box = System.add('Box');
   t.equal(typeof box, 'object', 'should return a reference to the added instance.');
   t.equal(System._records.length, 2, 'should add an instance of a custom class to _records');
+  t.end();
+});
+
+test('add() should pull from pull from System._pool if pooled items exist.', function(t) {
+  document.body.innerHTML = '';
+  System._records = [];
+  System._pool = [];
+  System.Classes = {};
+  var itemA = System.add();
+  t.equal(System._records.length, 1, 'should add a new item to _records');
+  System.remove(itemA);
+  t.assert(System._records.length === 0 && System._pool.length === 1, 'remove() should remove item from _records and add to _pool.');
+  var itemB = System.add();
+  t.assert(System._records.length === 1 && System._pool.length === 0, 'add() should check to splice items off _pool.');
   t.end();
 });
 
