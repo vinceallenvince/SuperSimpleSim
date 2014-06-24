@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome-ie7.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/jsoverson/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>System.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"></i></a></h2>
+      <p class="stat">64.49</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h2>
+      <p class="stat">119</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty"></i></a></h2>
+      <p class="stat">40.48</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs"></i></a></h2>
+      <p class="stat">0.67</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">/*global window, document, setTimeout, Burner, Modernizr */
+/*jshint supernew:true */
+
+var Item = require(&#039;./Item&#039;).Item,
+    Vector = require(&#039;./Vector&#039;).Vector;
+
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+/** @namespace */
+var System = {
+  name: &#039;System&#039;
+};
+
+/**
+ * Holds additional classes that can be defined at runtime.
+ * @memberof System
+ */
+System.Classes = {};
+
+/**
+ * Holds a vector describing the system gravity.
+ * @memberof System
+ */
+System.gravity = new Vector(0, 1);
+
+/**
+ * Holds a vector describing the system wind.
+ * @memberof System
+ */
+System.wind = new Vector();
+
+/**
+ * Stores references to all items in the system.
+ * @memberof System
+ * @private
+ */
+System._records = [];
+
+/**
+ * Stores references to all items removed from the system.
+ * @memberof System
+ * @private
+ */
+System._pool = [];
+
+/**
+ * Call to execute any setup code before starting the animation loop.
+ * @function setup
+ * @memberof System
+ */
+System.setup = function(func) {
+  func.call(this);
+};
+
+/**
+ * Adds instances of class to _records and calls init on them.
+ * @function add
+ * @memberof System
+ * @param {string} klass The name of the class to add.
+ * @param {Object} [opt_options=] A map of initial properties.
+ * @returns {Object} An instance of the added item.
+ */
+System.add = function(klass, opt_options) {
+
+  var records = this._records,
+      options = opt_options || {};
+
+  // recycle object if one is available
+  if (System._pool.length) {
+    records[records.length] = System._pool.splice(0, 1)[0];
+  } else {
+    if (System.Classes[klass]) {
+      records.push(new System.Classes[klass](this));
+    } else {
+      records.push(new Item(this));
+    }
+  }
+  records[records.length - 1].init(options);
+  return records[records.length - 1];
+};
+
+/**
+ * Removes an item from the system.
+ * @function remove
+ * @memberof System
+ * @param {Object} obj The item to remove.
+ */
+System.remove = function (obj) {
+
+  var i, max, records = System._records;
+
+  for (i = 0, max = records.length; i &lt; max; i++) {
+    if (records[i].id === obj.id) {
+      records[i].el.style.visibility = &#039;hidden&#039;; // hide item
+      System._pool[System._pool.length] = records.splice(i, 1)[0]; // move record to pool array
+      break;
+    }
+  }
+};
+
+/**
+ * Iterates over records.
+ * @function loop
+ * @memberof System
+ */
+System.loop = function() {
+  var i, records = System._records,
+      len = System._records.length;
+  for (i = len - 1; i &gt;= 0; i -= 1) {
+    records[i].step();
+  }
+  len = System._records.length; // check length in case items were removed in step()
+  for (i = len - 1; i &gt;= 0; i -= 1) {
+    records[i].draw();
+  }
+  if (typeof window.requestAnimationFrame !== &#039;undefined&#039;) {
+    window.requestAnimationFrame(System.loop);
+  }
+};
+
+module.exports.System = System;</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
