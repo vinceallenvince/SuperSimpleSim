@@ -4,7 +4,7 @@
   "description": "A super simple simulator.",
   "main": "src/main.js",
   "scripts": {
-    "test": "browserify test/*.js | testling"
+    "test": "browserify -t coverify test/*.js | testling | coverify"
   },
   "repository": {
     "type": "git",

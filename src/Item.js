@@ -15,7 +15,10 @@ function Item(system, opt_name) {
 
   this.name = opt_name || 'Item';
   this.system = system;
-  this.world = document.body;
+  this.world = {};
+  this.world.el = document.body;
+  this.world.width = document.body.scrollWidth;
+  this.world.height = document.body.scrollHeight;
   Item._idCount++;
 }
 
@@ -80,8 +83,8 @@ Item.prototype.init = function(opt_options) {
   this.mass = typeof options.mass === 'undefined' ? 10 : options.mass;
   this.acceleration = options.acceleration || new Vector();
   this.velocity = options.velocity || new Vector();
-  this.location = options.location || new Vector(this.world.scrollWidth / 2,
-      this.world.scrollHeight / 2);
+  this.location = options.location || new Vector(this.world.width / 2,
+      this.world.height / 2);
   this.maxSpeed = typeof options.maxSpeed === 'undefined' ? 10 : options.maxSpeed;
   this.minSpeed = options.minSpeed || 0;
   this.bounciness = options.bounciness || 0.5;
@@ -103,7 +106,7 @@ Item.prototype.init = function(opt_options) {
     this.el.className = 'item ' + this.name.toLowerCase();
     this.el.style.position = 'absolute';
     this.el.style.top = '-5000px';
-    this.world.appendChild(this.el);
+    this.world.el.appendChild(this.el);
   }
 };
 
@@ -153,8 +156,8 @@ Item.prototype.applyForce = function(force) {
  */
 Item.prototype._checkWorldEdges = function() {
 
-  var worldRight = this.world.scrollWidth,
-      worldBottom = this.world.scrollHeight,
+  var worldRight = this.world.width,
+      worldBottom = this.world.height,
       location = this.location,
       velocity = this.velocity,
       width = this.width,
@@ -186,8 +189,8 @@ Item.prototype._checkWorldEdges = function() {
  */
 Item.prototype._wrapWorldEdges = function() {
 
-  var worldRight = this.world.scrollWidth,
-      worldBottom = this.world.scrollHeight,
+  var worldRight = this.world.width,
+      worldBottom = this.world.height,
       location = this.location,
       width = this.width,
       height = this.height;

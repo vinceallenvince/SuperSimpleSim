@@ -113,7 +113,7 @@ MouseChaser.prototype._seek = function(target) {
   desiredVelocity.normalize();
 
   if (distanceToTarget < world.width / 2) { // slow down to arrive at target
-    var m = Utils.map(distanceToTarget, 0, world.width / 2, 0, this.maxSpeed);
+    var m = SuperSimpleSim.Utils.map(distanceToTarget, 0, world.width / 2, 0, this.maxSpeed);
     desiredVelocity.mult(m);
   } else {
     desiredVelocity.mult(this.maxSpeed);

@@ -61,14 +61,16 @@ test('remove() should hide an item and add it to _loop.', function(t) {
   System._pool = [];
   System.Classes = {};
   System.add();
-  t.equal(document.querySelectorAll('.item').length, 1, 'should append a DOM element to the document.body');
+  System.add();
+  t.equal(document.querySelectorAll('.item').length, 2, 'should append a DOM element to the document.body');
   System.remove(System._records[System._records.length - 1]);
-  t.equal(System._records.length, 0, 'should remove instance from _records');
+  t.equal(System._records.length, 1, 'should remove instance from _records');
   t.equal(System._pool.length, 1, 'shoud add instance to _pool');
   t.end();
 });
 
 test('loop() should call step() and draw().', function(t) {
+  window.requestAnimationFrame = function() {};
   document.body.innerHTML = '';
   System._records = [];
   System._pool = [];
